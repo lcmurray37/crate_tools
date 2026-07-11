@@ -5,3 +5,5 @@
 *.flac
 *.m4a
 .DS_Store
+*.xlsx
+*.xml
