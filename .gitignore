@@ -1,0 +1,7 @@
+*.mp3
+*.wav
+*.aif
+*.aiff
+*.flac
+*.m4a
+.DS_Store
