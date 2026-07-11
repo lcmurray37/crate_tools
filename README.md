@@ -1,6 +1,6 @@
-# Rekordbox Music Library Tools
+# Crate Tools
 
-A collection of Python utilities for managing and expanding a Rekordbox DJ library.
+A collection of Python utilities for managing and expanding a Rekordbox music library.
 
 ## Overview
 
