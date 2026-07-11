@@ -10,51 +10,15 @@ This repository contains two primary scripts:
 
 ---
 
-# rip_crate.py
-
-## Purpose
-
-This utility automates downloading music that corresponds to a Spotify playlist by searching YouTube using playlist metadata.
-
-It uses `spotdl` to locate and download matching audio and provides a simple graphical interface built with Tkinter.
-
-## Features
-
-- Tkinter GUI
-- Spotify playlist support
-- Uses `spotdl` for YouTube matching and downloads
-- Organizes downloaded files into a destination folder
-- Automatically formats downloaded tracks for easier library management
-
-## Download Method
-
-The script attempts to locate YouTube uploads that best match the metadata contained in a Spotify playlist.
-
-Because it relies primarily on metadata matching rather than direct audio extraction from Spotify, this workflow is generally considered a safe and practical approach for obtaining publicly available YouTube audio.
-
----
-
-# Requirements
-
-Typical dependencies include:
-
-- Python 3.10+
-- Ollama (running locally)
-- spotdl
-- Tkinter
-- pandas
-- openpyxl
-- lxml (if applicable)
-
-Install Python dependencies with:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
 # Workflow
+
+### Playlist Ripping
+
+1. Launch `rip_crate.py`.
+2. Enter or select a Spotify playlist.
+3. Choose a destination folder.
+4. Download matching tracks from YouTube via `spotdl`.
+5. Import the formatted files into your music library.
 
 ### Genre Tagging
 
@@ -64,13 +28,22 @@ pip install -r requirements.txt
 4. Apply or verify the suggested genres.
 5. Import `rekordbox_genres_updated.xml` back into Rekordbox.
 
-### Playlist Ripping
+---
 
-1. Launch `rip_crate.py`.
-2. Enter or select a Spotify playlist.
-3. Choose a destination folder.
-4. Download matching tracks from YouTube via `spotdl`.
-5. Import the formatted files into your music library.
+# rip_crate.py
+
+## Purpose
+
+This utility automates downloading music that corresponds to a Spotify playlist by searching YouTube using playlist metadata. It uses `spotdl` to locate and download matching audio and provides a simple graphical interface built with Tkinter. Because it relies primarily on metadata matching rather than direct audio extraction from Spotify, this workflow is generally considered a safe and practical approach for obtaining publicly available YouTube audio.
+
+
+## Features
+
+- Tkinter GUI
+- Spotify playlist support
+- Uses `spotdl` for YouTube matching and downloads
+- Organizes downloaded files into a destination folder
+- Automatically formats downloaded tracks for easier library management
 
 ---
 
