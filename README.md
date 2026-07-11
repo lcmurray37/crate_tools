@@ -71,7 +71,7 @@ pip install -r requirements.txt
 3. Choose a destination folder.
 4. Download matching tracks from YouTube via `spotdl`.
 5. Import the formatted files into your music library.
-6. 
+
 ---
 
 # rb_genre_tagger.py
