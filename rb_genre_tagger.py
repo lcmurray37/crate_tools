@@ -87,23 +87,28 @@ Tracks:
                 
     return updated_tracks
 
-def generate_excel_and_xml(updated_tracks, tree, all_tracks_dict):
+def generate_excel_and_xml(updated_tracks, tree):
     df = pd.DataFrame(updated_tracks)
     df.to_excel(EXCEL_OUTPUT_PATH, index=False)
     print(f"Saved suggestions spreadsheet to: {EXCEL_OUTPUT_PATH}")
-    
+
+    # Build lookup of suggested genres
+    genre_lookup = {
+        track["TrackID"]: track["Suggested_Genre"]
+        for track in updated_tracks
+    }
+
     root = tree.getroot()
-    collection = root.find('COLLECTION')
-    collection.clear()
-    collection.attrib['Entries'] = str(len(updated_tracks))
-    
-    for track in updated_tracks:
-        orig_attribs = all_tracks_dict[track['TrackID']]
-        orig_attribs['Genre'] = track['Suggested_Genre']
-        collection.append(ET.Element('TRACK', orig_attribs))
-        
-    tree.write(XML_OUTPUT_PATH, encoding='utf-8', xml_declaration=True)
-    print(f"Saved automated Rekordbox import XML to: {XML_OUTPUT_PATH}")
+    collection = root.find("COLLECTION")
+
+    # Update only tracks that received suggestions
+    for track in collection.findall("TRACK"):
+        track_id = track.attrib.get("TrackID")
+        if track_id in genre_lookup:
+            track.attrib["Genre"] = genre_lookup[track_id]
+
+    tree.write(XML_OUTPUT_PATH, encoding="utf-8", xml_declaration=True)
+    print(f"Saved updated Rekordbox XML to: {XML_OUTPUT_PATH}")
 
 if __name__ == "__main__":
     if not os.path.exists(XML_INPUT_PATH):
@@ -113,7 +118,7 @@ if __name__ == "__main__":
         if missing_tracks:
             # SAFETY TEST: Run just the first batch (e.g., [:15]) to check formatting compatibility with your local model
             completed_tracks = get_llm_genre_suggestions_batched(missing_tracks[:15])
-            generate_excel_and_xml(completed_tracks, original_tree, full_dict)
+            generate_excel_and_xml(completed_tracks, original_tree)
             print("\nDone!")
         else:
             print("No tracks missing a genre found!")

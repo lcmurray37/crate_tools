@@ -1,82 +1,114 @@
 # Crate Tools
 
-A collection of Python utilities for managing and expanding a Rekordbox music library.
+Python utilities for building and maintaining a Rekordbox DJ library.
 
 ## Overview
 
-This repository contains two primary scripts:
-- **`rip_crate.py`** – Downloads audio corresponding to Spotify playlists by matching playlist metadata against YouTube using `spotdl`, then formats the downloaded files for inclusion in a DJ library.
-- **`rb_genre_tagger.py`** – Uses a local Ollama large language model to analyze tracks in a Rekordbox collection that are missing genre information and generates suggested genre tags for manual review.
+This repository currently contains two standalone tools:
+
+* **`rip_crate.py`** — Downloads audio for Spotify playlists, albums, or tracks by matching metadata against YouTube using `spotdl`.
+* **`rb_genre_tagger.py`** — Uses a local Ollama LLM to generate genre suggestions for Rekordbox tracks with missing genre metadata.
 
 ---
 
-# Workflow
+## Requirements
 
-### Playlist Ripping
+* Python 3.10+
+* `spotdl` (for `rip_crate.py`)
+* Ollama running locally with a compatible model (default: `llama3`) for `rb_genre_tagger.py`
 
-1. Launch `rip_crate.py`.
-2. Enter or select a Spotify playlist.
-3. Choose a destination folder.
-4. Download matching tracks from YouTube via `spotdl`.
-5. Import the formatted files into your music library.
+Example Python dependencies:
 
-### Genre Tagging
-
-1. Export your Rekordbox collection as XML.
-2. Run `rb_genre_tagger.py`.
-3. Review the generated Excel file.
-4. Apply or verify the suggested genres.
-5. Import `rekordbox_genres_updated.xml` back into Rekordbox.
+```bash
+pip install pandas openpyxl openai
+pip install spotdl
+```
 
 ---
 
-# rip_crate.py
+## `rip_crate.py`
 
-## Purpose
+Downloads music from Spotify playlist metadata using `spotdl`, which searches YouTube for matching audio.
 
-This utility automates downloading music that corresponds to a Spotify playlist by searching YouTube using playlist metadata. It uses `spotdl` to locate and download matching audio and provides a simple graphical interface built with Tkinter. Because it relies primarily on metadata matching rather than direct audio extraction from Spotify, this workflow is generally considered a safe and practical approach for obtaining publicly available YouTube audio.
+### Features
 
+* Accepts Spotify playlist, album, or track URLs
+* Command-line URL input or interactive prompt
+* Folder selection via Tkinter
+* Downloads 320 kbps MP3 files
+* Uses the active Python environment's `spotdl` installation
 
-## Features
+### Usage
 
-- Tkinter GUI
-- Spotify playlist support
-- Uses `spotdl` for YouTube matching and downloads
-- Organizes downloaded files into a destination folder
-- Automatically formats downloaded tracks for easier library management
+```bash
+python rip_crate.py
+```
 
----
+or
 
-# rb_genre_tagger.py
+```bash
+python rip_crate.py <spotify-url>
+```
 
-## Purpose
-
-Many music libraries contain tracks without consistent genre metadata. This script scans a Rekordbox XML collection, identifies tracks with missing genres, and uses a locally running Ollama model to suggest appropriate genre tags.
-
-The generated recommendations are intended to be **reviewed by the user before import**.
-
-## Features
-
-- Parses Rekordbox XML collections
-- Detects tracks with missing genre metadata
-- Uses a local Ollama LLM for genre inference
-- Generates an Excel spreadsheet for manual review
-- Produces an updated Rekordbox XML for import
-
-## Output Files
-
-- `rekordbox_genres.xlsx`
-  - Suggested genre assignments
-  - Intended for manual verification/editing
-
-- `rekordbox_genres_updated.xml`
-  - Updated Rekordbox collection with reviewed genre tags
-  - Ready for import into Rekordbox
+You will be prompted to choose a download destination.
 
 ---
 
-# Disclaimer
+## `rb_genre_tagger.py`
 
-These tools are intended for personal music library management.
+Scans a Rekordbox XML collection for tracks missing genre metadata and uses a locally hosted Ollama model to infer genre labels.
 
-Users are responsible for ensuring they comply with all applicable copyright laws, platform terms of service, and licensing requirements in their jurisdiction.
+### Features
+
+* Parses Rekordbox XML collections
+* Detects tracks with empty genre fields
+* Batch inference using the OpenAI-compatible Ollama API
+* Exports suggested genres to Excel
+* Generates an updated Rekordbox XML
+
+### Configuration
+
+Key settings are defined near the top of the script:
+
+* Input/output file paths
+* Ollama model
+* Batch size
+
+By default the script expects:
+
+```
+rekordbox_collection.xml
+```
+
+to exist in the working directory.
+
+### Outputs
+
+| File                              | Description                               |
+| --------------------------------- | ----------------------------------------- |
+| `missing_genres_suggestions.xlsx` | Suggested genre assignments for review    |
+| `rekordbox_genres_updated.xml`    | Rekordbox XML with generated genre values |
+
+### Usage
+
+Start Ollama locally, then run:
+
+```bash
+python rb_genre_tagger.py
+```
+
+---
+
+## Notes
+
+* The generated XML preserves the complete Rekordbox collection and updates only tracks that received genre suggestions.
+* By default, the script processes only the first batch of missing tracks (`[:15]`) as a compatibility check for local LLM output. Remove the slice to process the entire collection.
+* Review generated genre suggestions before importing the updated XML into Rekordbox.
+
+---
+
+## Disclaimer
+
+These utilities are intended for personal music library management.
+
+Users are responsible for complying with applicable copyright laws, platform terms of service, and licensing requirements in their jurisdiction.
